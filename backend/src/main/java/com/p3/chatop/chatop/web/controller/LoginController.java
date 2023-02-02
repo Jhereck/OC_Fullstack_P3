@@ -14,10 +14,10 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.p3.chatop.chatop.web.model.Users;
+import com.p3.chatop.chatop.web.model.User;
 import com.p3.chatop.chatop.web.payload.request.LoginRequest;
 import com.p3.chatop.chatop.web.payload.response.TokenResponse;
-import com.p3.chatop.chatop.web.repository.UsersRepository;
+import com.p3.chatop.chatop.web.repository.UserRepository;
 
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -28,10 +28,11 @@ import io.jsonwebtoken.security.Keys;
 public class LoginController {
 
     @Autowired
-    UsersRepository usersRepository;
+    UserRepository usersRepository;
 
     // A secret key used to sign the JWT
-    public static final Key KEY = Keys.secretKeyFor(SignatureAlgorithm.HS256);
+    Key KEY = Keys.secretKeyFor(SignatureAlgorithm.HS256);
+    public static int USER_ID = 0;
 
     @PostMapping("auth/login")
     public Object login(@RequestBody LoginRequest loginRequest) {
@@ -63,7 +64,8 @@ public class LoginController {
 
             // The JWT is valid, so allow the request
 
-            Optional<Users> existingUserEmail = usersRepository.findByEmail(username);
+            User existingUserEmail = usersRepository.findUserByEmail(username);
+            USER_ID = existingUserEmail.getId();
             return ResponseEntity.ok(existingUserEmail);
         } catch (Exception e) {
             // The JWT is invalid, so return an error
@@ -74,7 +76,7 @@ public class LoginController {
     private boolean isValidUser(LoginRequest loginRequest) {
         // Check if the user is valid by checking the database or other methods
 
-        Optional<Users> existingUserEmail = usersRepository.findByEmail(loginRequest.getEmail());
+        Optional<User> existingUserEmail = usersRepository.findByEmail(loginRequest.getEmail());
 
         if ((existingUserEmail.isPresent()) && (loginRequest.getPassword().equals(
                 existingUserEmail.get().getPassword()))) {

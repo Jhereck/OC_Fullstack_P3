@@ -3,11 +3,11 @@ package com.p3.chatop.chatop.web.repository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import com.p3.chatop.chatop.web.model.Messages;
+import com.p3.chatop.chatop.web.model.Message;
 
 @Repository
-public interface MessagesRepository extends JpaRepository<Messages, Integer> {
+public interface MessageRepository extends JpaRepository<Message, Integer> {
 
-    Messages findById(int id);
+    Message findById(int id);
 
 }
